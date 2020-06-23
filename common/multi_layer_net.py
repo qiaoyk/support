@@ -1,6 +1,6 @@
 # coding: utf-8
 import sys, os
-sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
+sys.path.append(os.pardir)  
 import numpy as np
 from collections import OrderedDict
 from common.layers import *
@@ -18,10 +18,8 @@ class MultiLayerNet:
         self.weight_decay_lambda = weight_decay_lambda
         self.params = {}
 
-        # 重みの初期化
         self.__init_weight(weight_init_std)
 
-        # レイヤの生成
         activation_layer = {'sigmoid': Sigmoid, 'relu': Relu}
         self.layers = OrderedDict()
         for idx in range(1, self.hidden_layer_num+1):
@@ -41,9 +39,9 @@ class MultiLayerNet:
         for idx in range(1, len(all_size_list)):
             scale = weight_init_std
             if str(weight_init_std).lower() in ('relu', 'he'):
-                scale = np.sqrt(2.0 / all_size_list[idx - 1])  # ReLUを使う場合に推奨される初期値
+                scale = np.sqrt(2.0 / all_size_list[idx - 1])  
             elif str(weight_init_std).lower() in ('sigmoid', 'xavier'):
-                scale = np.sqrt(1.0 / all_size_list[idx - 1])  # sigmoidを使う場合に推奨される初期値
+                scale = np.sqrt(1.0 / all_size_list[idx - 1])  
 
             self.params['W' + str(idx)] = scale * np.random.randn(all_size_list[idx-1], all_size_list[idx])
             self.params['b' + str(idx)] = np.zeros(all_size_list[idx])
@@ -86,10 +84,8 @@ class MultiLayerNet:
 
     def gradient(self, x, t):
 
-        # forward
         self.loss(x, t)
 
-        # backward
         dout = 1
         dout = self.last_layer.backward(dout)
 
@@ -98,7 +94,6 @@ class MultiLayerNet:
         for layer in layers:
             dout = layer.backward(dout)
 
-        # 設定
         grads = {}
         for idx in range(1, self.hidden_layer_num+2):
             grads['W' + str(idx)] = self.layers['Affine' + str(idx)].dW + self.weight_decay_lambda * self.layers['Affine' + str(idx)].W
